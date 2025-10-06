@@ -5,10 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ProgressRail } from "@/features/studio/ProgressRail";
 import { PlanChat } from "@/features/studio/PlanChat";
-import { ComposePane } from "@/features/studio/ComposePane";
+import { ComposePaneV3 } from "@/features/studio/ComposePaneV3";
 import { PublishPane } from "@/features/studio/PublishPane";
 import { ShimmerCard } from "@/components/ui/loading-shimmer";
-import { useFlowStore } from "@/lib/flow-store";
+import { useFlowStore, allSlotsHaveMedia } from "@/lib/flow-store";
 import { COPY } from "@/lib/copy";
 
 interface StudioPageProps {
@@ -23,7 +23,9 @@ export default function StudioPage({ params }: StudioPageProps) {
   const {
     step,
     draftId: storeDraftId,
+    slots,
     setDraftId,
+    setMySubmission,
     nextStep,
     previousStep,
   } = useFlowStore();
@@ -40,6 +42,22 @@ export default function StudioPage({ params }: StudioPageProps) {
 
   const handleContinue = () => {
     if (step === "publish") {
+      // V3: Create submission before navigating
+      setMySubmission(params.slug, {
+        id: `my-submission-${params.slug}-${Date.now()}`,
+        title: "My Notion workflow",
+        platform: "instagram",
+        views: 0,
+        likes: 0,
+        comments: 0,
+        earningsUsd: 0,
+        postedAt: new Date().toISOString(),
+        videoPlaceholderLabel: "Your video",
+        creatorHandle: "@alexcreates",
+        status: "under_review",
+        isMine: true,
+      });
+
       // Navigate to submitted page
       router.push("/submitted");
     } else {
@@ -86,10 +104,10 @@ export default function StudioPage({ params }: StudioPageProps) {
           </div>
         ) : (
           <>
-            {/* Step Content - V2: 3-step flow */}
+            {/* Step Content - V3: 3-step flow with new compose */}
             {step === "plan" && <PlanChat />}
 
-            {step === "compose" && <ComposePane />}
+            {step === "compose" && <ComposePaneV3 />}
 
             {step === "publish" && <PublishPane />}
           </>
@@ -109,7 +127,12 @@ export default function StudioPage({ params }: StudioPageProps) {
           </Button>
 
           {/* Continue Button */}
-          <Button size="lg" onClick={handleContinue} className="px-8">
+          <Button
+            size="lg"
+            onClick={handleContinue}
+            className="px-8"
+            disabled={step === "compose" && !allSlotsHaveMedia(slots)}
+          >
             {step === "publish" ? COPY.PUBLISH_CTA : COPY.STUDIO_CONTINUE}
           </Button>
         </div>

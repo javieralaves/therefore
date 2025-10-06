@@ -49,3 +49,46 @@ export interface Guardrail {
   message?: string; // "Add #ad to Hook"
   fix?: string; // Quick suggestion text
 }
+
+// V3: Submission types for Brief page
+export type SubmissionStatus =
+  | "under_review"
+  | "approved"
+  | "rejected"
+  | "live";
+
+export interface Submission {
+  id: string;
+  title: string;
+  platform: "instagram" | "tiktok" | "youtube";
+  views: number;
+  likes: number;
+  comments: number;
+  earningsUsd: number;
+  postedAt: string; // ISO date
+  videoPlaceholderLabel: string;
+  creatorHandle: string;
+  status?: SubmissionStatus;
+  isMine?: boolean;
+}
+
+// V3: Flow item for sidebar
+export interface FlowItem {
+  id: string;
+  title: string;
+  lastEdited: string; // ISO date
+}
+
+// V3: User profile for sidebar
+export interface UserProfile {
+  name: string;
+  handle: string;
+  avatar: string; // emoji or URL
+}
+
+// V3: My media library item
+export interface MyMediaItem {
+  id: string;
+  label: string;
+  durationSec: number;
+}

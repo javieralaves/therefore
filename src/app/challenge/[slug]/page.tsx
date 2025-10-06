@@ -1,26 +1,30 @@
+"use client";
+
+import { use } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { BrandGuardrails } from "@/features/brief/BrandGuardrails";
 import { ExamplesCarousel } from "@/features/brief/ExamplesCarousel";
-import { ApprovedCreators } from "@/features/brief/ApprovedCreators";
+import { CampaignStatusCard } from "@/features/brief/CampaignStatusCard";
+import { SubmissionsGrid } from "@/features/brief/SubmissionsGrid";
 import {
   mockChallengeBrief,
-  mockApprovedCreators,
-  formatClosesIn,
-  budgetProgress,
+  mockOpportunities,
+  mockSubmissionsByOpportunity,
 } from "@/lib/mock";
+import { useFlowStore } from "@/lib/flow-store";
 import { COPY } from "@/lib/copy";
 
 interface ChallengePageProps {
   params: Promise<{ slug: string }>;
 }
 
-export default async function ChallengePage({ params }: ChallengePageProps) {
-  const { slug } = await params;
+export default function ChallengePage({ params }: ChallengePageProps) {
+  const { slug } = use(params);
+  const { getMySubmission } = useFlowStore();
 
   // For prototype, only support "notion" challenge
   if (slug !== mockChallengeBrief.slug) {
@@ -28,31 +32,51 @@ export default async function ChallengePage({ params }: ChallengePageProps) {
   }
 
   const brief = mockChallengeBrief;
-  const closesText = formatClosesIn(brief.closesAt);
-  const { percent: budgetPercent, spent: budgetSpent } = budgetProgress(
-    brief.budgetTotalUsd,
-    brief.budgetRemainingUsd
-  );
+
+  // V3: Get opportunity data for Campaign Status Card
+  const opportunity = mockOpportunities.find((opp) => opp.slug === slug);
+  if (!opportunity) {
+    notFound();
+  }
+
+  // V3: Get submissions for this opportunity
+  let submissions = mockSubmissionsByOpportunity[slug] || [];
+
+  // V3: Check if user has submitted and prepend it
+  const mySubmission = getMySubmission(slug);
+  if (mySubmission) {
+    // Remove any existing "mine" submissions and add the current one first
+    submissions = [mySubmission, ...submissions.filter((s) => !s.isMine)];
+  }
 
   return (
     <div className="container max-w-screen-xl mx-auto px-6 py-12">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content - Left Column */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Brand Header */}
+          {/* Brand Header - V3: CTA moved to top right */}
           <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-neutral-900 text-white flex items-center justify-center text-2xl font-bold">
-                {brief.brandLogo[0]}
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-neutral-900 text-white flex items-center justify-center text-2xl font-bold">
+                  {brief.brandLogo[0]}
+                </div>
+                <div>
+                  <h1 className="text-3xl font-semibold tracking-tight">
+                    {brief.brandName}
+                  </h1>
+                  <Badge variant="secondary" className="mt-1">
+                    {COPY.ASK_SPONSORED_BADGE}
+                  </Badge>
+                </div>
               </div>
-              <div>
-                <h1 className="text-3xl font-semibold tracking-tight">
-                  {brief.brandName}
-                </h1>
-                <Badge variant="secondary" className="mt-1">
-                  {COPY.ASK_SPONSORED_BADGE}
-                </Badge>
-              </div>
+
+              {/* V3: CTA Button in Header */}
+              <Link href={`/studio/${brief.slug}?draft=demo-${Date.now()}`}>
+                <Button size="lg" className="px-8 whitespace-nowrap">
+                  {COPY.BRIEF_CTA}
+                </Button>
+              </Link>
             </div>
 
             {/* V2: Countries chips */}
@@ -65,69 +89,20 @@ export default async function ChallengePage({ params }: ChallengePageProps) {
             </div>
           </div>
 
-          {/* Why Suggested */}
+          {/* Why You */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">
-                {COPY.BRIEF_WHY_SUGGESTED}
-              </CardTitle>
+              <CardTitle className="text-lg">{COPY.BRIEF_WHY_YOU}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-neutral-700 leading-relaxed">
-                {brief.whySuggested}
+                {opportunity.whyYou}
               </p>
             </CardContent>
           </Card>
 
-          {/* Payout & Closes In */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{COPY.BRIEF_PAYOUT}</CardTitle>
-                {/* V2: Closes in badge */}
-                <Badge
-                  variant="outline"
-                  className={
-                    closesText.includes("today") ||
-                    closesText.includes("tomorrow")
-                      ? "border-amber-300 bg-amber-50 text-amber-800"
-                      : "border-neutral-300 text-neutral-700"
-                  }
-                >
-                  {closesText}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="text-2xl font-semibold text-neutral-900">
-                  {brief.payoutAmount}
-                </p>
-                <p className="text-sm text-neutral-600">{brief.payoutModel}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* V2: Budget Remaining */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">
-                {COPY.BRIEF_BUDGET_REMAINING}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Progress value={budgetPercent} className="h-2" />
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-neutral-600">
-                  ${budgetSpent.toLocaleString()} {COPY.BRIEF_BUDGET_SPENT_OF} $
-                  {brief.budgetTotalUsd.toLocaleString()}
-                </span>
-                <span className="font-medium text-neutral-900">
-                  {budgetPercent}% allocated
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+          {/* V3: Campaign Status Card (replaces separate Payout/Budget cards) */}
+          <CampaignStatusCard opportunity={opportunity} />
 
           {/* Must Say */}
           <Card>
@@ -148,27 +123,18 @@ export default async function ChallengePage({ params }: ChallengePageProps) {
             </CardContent>
           </Card>
 
-          {/* V2: Approved Creators */}
+          {/* V3: Submissions Grid (replaces Approved Creators) */}
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">
-              {COPY.BRIEF_APPROVED_CREATORS}
+              {COPY.BRIEF_SUBMISSIONS_TITLE}
             </h2>
-            <ApprovedCreators creators={mockApprovedCreators} />
+            <SubmissionsGrid submissions={submissions} />
           </div>
 
           {/* Examples */}
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">{COPY.BRIEF_EXAMPLES}</h2>
             <ExamplesCarousel count={brief.exampleCount} />
-          </div>
-
-          {/* CTA Button */}
-          <div className="pt-4">
-            <Link href={`/studio/${brief.slug}?draft=demo-${Date.now()}`}>
-              <Button size="lg" className="w-full md:w-auto text-base px-8">
-                {COPY.BRIEF_CTA}
-              </Button>
-            </Link>
           </div>
         </div>
 

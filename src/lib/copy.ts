@@ -153,4 +153,56 @@ export const COPY = {
   PLACEHOLDER_AROLL: "A-roll video",
   PLACEHOLDER_PREVIEW: "Video preview",
   PLACEHOLDER_BRAND_DEMO: "Brand demo stock",
+
+  // V3: Sidebar navigation
+  SIDEBAR_LOGO: "Therefore",
+  SIDEBAR_NAV_NEW_FLOW: "New flow",
+  SIDEBAR_NAV_BRAND_DEALS: "Brand deals",
+  SIDEBAR_NAV_IDEAS: "Ideas & suggestions",
+  SIDEBAR_FLOWS_LABEL: "Flows",
+  SIDEBAR_MOBILE_MENU: "Menu",
+  SIDEBAR_CLOSE: "Close",
+
+  // V3: Compose - Script Row & Slots
+  COMPOSE_SELECT_SCRIPT: "Select a script",
+  COMPOSE_CLIP_SLOTS: "Clip slots",
+  COMPOSE_SLOT_FILLED: "Filled",
+  COMPOSE_SLOT_REPLACE: "Replace",
+  COMPOSE_SLOT_CLEAR: "Clear",
+  COMPOSE_ALL_SLOTS_FILLED: "All slots filled — ready to publish",
+
+  // V3: Compose - Media Tabs
+  COMPOSE_MEDIA_TAB_MY_MEDIA: "My media",
+  COMPOSE_MEDIA_TAB_AI_CAMEO: "AI cameo",
+  COMPOSE_MEDIA_TAB_BRANDED: "Branded media",
+  COMPOSE_AI_CAMEO_BUTTON: "Set up your AI avatar",
+  COMPOSE_AI_CAMEO_COMING_SOON: "Coming soon",
+
+  // V3: Brief - Campaign Status
+  BRIEF_CAMPAIGN_STATUS: "Campaign status",
+  BRIEF_CPM_LABEL: "CPM",
+  BRIEF_BUDGET_PROGRESS_LABEL: "Budget allocated",
+
+  // V3: Brief - Submissions Grid
+  BRIEF_SUBMISSIONS_TITLE: "Submissions",
+  BRIEF_YOUR_SUBMISSION: "Your submission",
+  BRIEF_SUBMISSION_VIEWS: "views",
+  BRIEF_SUBMISSION_LIKES: "likes",
+  BRIEF_SUBMISSION_COMMENTS: "comments",
+  BRIEF_SUBMISSION_EARNINGS: "earned",
+  BRIEF_SUBMISSION_POSTED: "Posted",
+
+  // V3: Submission Status
+  SUBMISSION_STATUS_UNDER_REVIEW: "Under review",
+  SUBMISSION_STATUS_APPROVED: "Approved",
+  SUBMISSION_STATUS_REJECTED: "Rejected",
+  SUBMISSION_STATUS_LIVE: "Live",
+
+  // V3: Submitted Page Enhancements
+  SUBMITTED_VIEW_CAMPAIGN: "View campaign",
+
+  // V3: Ideas Page
+  IDEAS_PAGE_TITLE: "Ideas & suggestions",
+  IDEAS_PAGE_SUBTITLE:
+    "Explore content ideas tailored to your style and audience. Click any suggestion to get started.",
 } as const;

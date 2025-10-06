@@ -7,6 +7,10 @@ import type {
   Guardrail,
   ComposeSlotId,
   ComposeSlot,
+  Submission,
+  FlowItem,
+  UserProfile,
+  MyMediaItem,
 } from "./types";
 import type { GuardrailStatus } from "./types"; // Used in Guardrail interface
 
@@ -639,3 +643,183 @@ export const mockUserContext = {
   toneChips: ["Relatable", "Authentic", "Educational", "Casual", "Encouraging"],
   recentPostsCount: 12,
 };
+
+// ============================================================================
+// V3 DATA: SIDEBAR & USER
+// ============================================================================
+
+export const mockUser: UserProfile = {
+  name: "Alex Chen",
+  handle: "@alexcreates",
+  avatar: "👤",
+};
+
+export const mockFlows: FlowItem[] = [
+  {
+    id: "flow-1",
+    title: "Notion productivity tips",
+    lastEdited: "2025-10-06T10:30:00Z",
+  },
+  {
+    id: "flow-2",
+    title: "Behind the scenes: My setup",
+    lastEdited: "2025-10-05T14:20:00Z",
+  },
+  {
+    id: "flow-3",
+    title: "Design tools comparison",
+    lastEdited: "2025-10-04T09:15:00Z",
+  },
+  {
+    id: "flow-4",
+    title: "Freelancing tips Q&A",
+    lastEdited: "2025-10-03T16:45:00Z",
+  },
+];
+
+// ============================================================================
+// V3 DATA: MY MEDIA LIBRARY
+// ============================================================================
+
+export const mockMyMedia: MyMediaItem[] = [
+  { id: "my-1", label: "Desk setup b-roll", durationSec: 4 },
+  { id: "my-2", label: "Talking head intro", durationSec: 5 },
+  { id: "my-3", label: "Screen recording: workflow", durationSec: 8 },
+  { id: "my-4", label: "Transition clip", durationSec: 2 },
+  { id: "my-5", label: "Product unboxing", durationSec: 6 },
+  { id: "my-6", label: "Time-lapse editing", durationSec: 7 },
+  { id: "my-7", label: "Close-up hands typing", durationSec: 3 },
+  { id: "my-8", label: "Outro wave", durationSec: 3 },
+];
+
+// ============================================================================
+// V3 DATA: SUBMISSIONS BY OPPORTUNITY
+// ============================================================================
+
+export const mockSubmissionsByOpportunity: Record<string, Submission[]> = {
+  notion: [
+    {
+      id: "sub-1",
+      title: "How I organize my projects",
+      platform: "instagram",
+      views: 45200,
+      likes: 3100,
+      comments: 187,
+      earningsUsd: 203.4,
+      postedAt: "2025-10-04T12:00:00Z",
+      videoPlaceholderLabel: "Notion workflow demo",
+      creatorHandle: "@sarahdesigns",
+      status: "live",
+    },
+    {
+      id: "sub-2",
+      title: "3 Notion hacks that changed my life",
+      platform: "tiktok",
+      views: 128000,
+      likes: 8900,
+      comments: 542,
+      earningsUsd: 576.0,
+      postedAt: "2025-10-03T09:30:00Z",
+      videoPlaceholderLabel: "Notion tips montage",
+      creatorHandle: "@productivitypro",
+      status: "live",
+    },
+    {
+      id: "sub-3",
+      title: "Why I switched from Trello to Notion",
+      platform: "youtube",
+      views: 34100,
+      likes: 2400,
+      comments: 156,
+      earningsUsd: 153.45,
+      postedAt: "2025-10-05T15:00:00Z",
+      videoPlaceholderLabel: "Comparison video",
+      creatorHandle: "@workflowwizard",
+      status: "live",
+    },
+    {
+      id: "sub-4",
+      title: "My daily Notion routine",
+      platform: "instagram",
+      views: 52000,
+      likes: 3800,
+      comments: 214,
+      earningsUsd: 234.0,
+      postedAt: "2025-10-02T08:00:00Z",
+      videoPlaceholderLabel: "Morning routine",
+      creatorHandle: "@creativehustle",
+      status: "live",
+    },
+    {
+      id: "sub-5",
+      title: "Notion templates you need",
+      platform: "tiktok",
+      views: 89000,
+      likes: 6200,
+      comments: 401,
+      earningsUsd: 400.5,
+      postedAt: "2025-10-01T11:30:00Z",
+      videoPlaceholderLabel: "Template showcase",
+      creatorHandle: "@techexplained",
+      status: "live",
+    },
+    {
+      id: "sub-6",
+      title: "Before & after: My workspace",
+      platform: "youtube",
+      views: 28400,
+      likes: 1900,
+      comments: 98,
+      earningsUsd: 127.8,
+      postedAt: "2025-09-30T14:00:00Z",
+      videoPlaceholderLabel: "Transformation video",
+      creatorHandle: "@designdaily",
+      status: "live",
+    },
+    {
+      id: "sub-7",
+      title: "Notion for students",
+      platform: "instagram",
+      views: 61000,
+      likes: 4300,
+      comments: 267,
+      earningsUsd: 274.5,
+      postedAt: "2025-09-29T10:00:00Z",
+      videoPlaceholderLabel: "Study setup",
+      creatorHandle: "@studywithme",
+      status: "live",
+    },
+    {
+      id: "sub-8",
+      title: "My Notion databases explained",
+      platform: "tiktok",
+      views: 103000,
+      likes: 7800,
+      comments: 512,
+      earningsUsd: 463.5,
+      postedAt: "2025-09-28T16:30:00Z",
+      videoPlaceholderLabel: "Database tutorial",
+      creatorHandle: "@notionexpert",
+      status: "live",
+    },
+  ],
+};
+
+// Template for creating user's submission
+export const createMySubmission = (
+  slug: string,
+  title: string = "My Notion workflow"
+): Submission => ({
+  id: `my-submission-${slug}-${Date.now()}`,
+  title,
+  platform: "instagram",
+  views: 0,
+  likes: 0,
+  comments: 0,
+  earningsUsd: 0,
+  postedAt: new Date().toISOString(),
+  videoPlaceholderLabel: "Your video",
+  creatorHandle: mockUser.handle,
+  status: "under_review",
+  isMine: true,
+});
