@@ -1,14 +1,28 @@
-// Copy constants for Therefore prototype
+// Copy constants for Therefore V2 prototype
 
 export const COPY = {
   // App name & branding
   APP_NAME: "Therefore",
   TAGLINE: "From idea to brand-ready short in 30 minutes",
 
-  // Home / Ask page
+  // Home / Ask page (V2)
   ASK_HEADLINE: "What do you want to do?",
+  ASK_SUBHEADLINE:
+    "Start from a brand opportunity or spin up an idea. Your context personalizes both.",
   ASK_PLACEHOLDER: "Describe what you want to create...",
   ASK_SPONSORED_BADGE: "Sponsored",
+
+  // Home - Opportunities section (V2)
+  OPPORTUNITIES_SECTION_TITLE: "Brand opportunities for you",
+  OPPORTUNITIES_VIEW_ALL: "View all",
+  OPPORTUNITIES_CLOSES_PREFIX: "Closes in",
+  OPPORTUNITIES_AVAILABLE_PREFIX: "Available in:",
+
+  // Opportunities directory page (V2)
+  OPPORTUNITIES_PAGE_TITLE: "Brand opportunities",
+  OPPORTUNITIES_FILTERS_PLATFORM: "Platform",
+  OPPORTUNITIES_FILTERS_CATEGORY: "Category",
+  OPPORTUNITIES_FILTERS_COUNTRY: "Country",
 
   // Context page
   CONTEXT_TITLE: "My Context",
@@ -18,11 +32,16 @@ export const COPY = {
   CONTEXT_TONE: "Your tone",
   CONTEXT_RECENT_POSTS: "Recent posts",
 
-  // Brief page
+  // Brief page (V2 enhanced)
   BRIEF_WHY_SUGGESTED: "Why this challenge is a good fit",
+  BRIEF_WHY_YOU: "Why you",
   BRIEF_PAYOUT: "Payout",
+  BRIEF_BUDGET_REMAINING: "Budget remaining",
+  BRIEF_BUDGET_SPENT_OF: "of", // e.g., "$18,000 of $50,000"
+  BRIEF_CLOSES_IN: "Closes in",
   BRIEF_MUST_SAY: "Must include",
   BRIEF_EXAMPLES: "Examples from other creators",
+  BRIEF_APPROVED_CREATORS: "Approved creators",
   BRIEF_CTA: "Start creating",
 
   // Studio - General
@@ -38,7 +57,36 @@ export const COPY = {
   PLAN_SUMMARY_DISCLOSURE: "Disclosure",
   PLAN_SUMMARY_DURATION: "Target duration",
 
-  // Studio - Script step
+  // Studio - Compose step (V2: replaces Script + Make)
+  COMPOSE_TITLE: "Compose your short",
+  COMPOSE_SCRIPT_PREFIX: "Script:",
+  COMPOSE_VIEW_VARIANTS: "View variants",
+  COMPOSE_OPENERS_TITLE: "Openers & hooks",
+  COMPOSE_PREVIEW_DISABLED: "Preview",
+
+  // Compose - Timeline slots (V2)
+  COMPOSE_SLOT_HOOK_LABEL: "Hook",
+  COMPOSE_SLOT_HOOK_DESCRIPTION: "Grab attention in 3–5s",
+  COMPOSE_SLOT_BODY_LABEL: "Body",
+  COMPOSE_SLOT_BODY_DESCRIPTION: "Show the value in 12–20s",
+  COMPOSE_SLOT_CTA_LABEL: "CTA",
+  COMPOSE_SLOT_CTA_DESCRIPTION: "One clear action in 3–5s",
+
+  // Compose - Slot actions (V2)
+  COMPOSE_AROLL_UPLOAD: "Upload",
+  COMPOSE_AROLL_AI: "AI",
+  COMPOSE_SELECT_MEDIA: "Select branded media",
+  COMPOSE_OVERLAY_PLACEHOLDER: "Add text overlay...",
+
+  // Script Switcher (V2)
+  SCRIPT_SWITCHER_TITLE: "Script variants",
+  SCRIPT_SWITCHER_APPLY: "Apply variant",
+
+  // Media Picker (V2)
+  MEDIA_PICKER_TITLE: "Brand media",
+  MEDIA_PICKER_RECOMMENDED: "Recommended",
+
+  // V1 - Script step (kept for backward compatibility)
   SCRIPT_TITLE: "Choose your script",
   SCRIPT_VARIANTS_LABEL: "Script variants",
   SCRIPT_EDITOR_LABEL: "Edit your script",
@@ -46,7 +94,7 @@ export const COPY = {
   SCRIPT_ACTION_SHORTEN: "Shorten to 30s",
   SCRIPT_ACTION_INSERT_CTA: "Insert CTA",
 
-  // Studio - Make step
+  // V1 - Make step (kept for backward compatibility)
   MAKE_TITLE: "Assemble your short",
   MAKE_TIMELINE_HOOK: "Hook",
   MAKE_TIMELINE_BODY: "Body",
@@ -63,7 +111,7 @@ export const COPY = {
   MAKE_CAPTIONS_BRAND_STYLE: "Brand style captions",
   MAKE_PREVIEW_TITLE: "Preview",
 
-  // Studio - Publish step
+  // Studio - Publish step (V2)
   PUBLISH_TITLE: "Ready to submit",
   PUBLISH_PREVIEW_LABEL: "Final preview",
   PUBLISH_PLATFORMS_LABEL: "Platforms",
@@ -74,16 +122,28 @@ export const COPY = {
   PUBLISH_CAPTION_PLACEHOLDER: "Write your caption...",
   PUBLISH_HASHTAGS_LABEL: "Hashtags",
   PUBLISH_HASHTAGS_PLACEHOLDER: "#productivity #notion #creator",
+  PUBLISH_HELPER_TEXT:
+    "Submissions are typically reviewed within 24 hours. You'll be notified in-app and by email when the brand responds.",
   PUBLISH_CTA: "Submit for brand review",
 
-  // Guardrails
-  GUARDRAILS_TITLE: "Brand guardrails",
-  GUARDRAILS_SUBTITLE: "Live checks for Notion requirements",
+  // Guardrails (V2: panel format)
+  GUARDRAILS_BUTTON: "Guardrails",
+  GUARDRAILS_PANEL_TITLE: "Brand guardrails",
+  GUARDRAILS_PANEL_SUBTITLE: "Live checks for brand requirements",
+  GUARDRAILS_APPLY_FIXES: "Apply fixes",
+  GUARDRAILS_ALL_PASS: "All checks passed",
 
-  // Submitted page
+  // Top bar (V2)
+  TOPBAR_RESET_LINK: "Reset prototype",
+  TOPBAR_RESET_TOAST: "Prototype reset successfully",
+
+  // Submitted page (V2)
   SUBMITTED_TITLE: "Submitted for review! 🎉",
   SUBMITTED_MESSAGE:
-    "Your short has been submitted to Notion for review. We'll notify you in-app and by email when they respond (usually within 24 hours).",
+    "Your short has been submitted for brand review. We'll notify you in-app and by email when they respond (usually within 24 hours).",
+  SUBMITTED_PAYOUT_NUDGE_TITLE: "Set up payouts",
+  SUBMITTED_PAYOUT_NUDGE_MESSAGE:
+    "Set up payouts to receive earnings once your content is approved and starts performing.",
   SUBMITTED_VIEW_SUBMISSIONS: "View my submissions",
   SUBMITTED_BACK_HOME: "Back to Home",
 

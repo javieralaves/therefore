@@ -48,6 +48,28 @@ export default function SubmittedPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* V2: Stripe Payout Nudge */}
+      <Card className="mt-6 border-2 border-blue-200 bg-blue-50/30">
+        <CardContent className="p-6">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+              <span className="text-xl">💰</span>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-lg mb-1">
+                {COPY.SUBMITTED_PAYOUT_NUDGE_TITLE}
+              </h3>
+              <p className="text-sm text-neutral-700 leading-relaxed mb-4">
+                {COPY.SUBMITTED_PAYOUT_NUDGE_MESSAGE}
+              </p>
+              <Button variant="outline" size="sm" disabled>
+                Connect Stripe account
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

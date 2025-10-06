@@ -3,9 +3,16 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { BrandGuardrails } from "@/features/brief/BrandGuardrails";
 import { ExamplesCarousel } from "@/features/brief/ExamplesCarousel";
-import { mockChallengeBrief } from "@/lib/mock";
+import { ApprovedCreators } from "@/features/brief/ApprovedCreators";
+import {
+  mockChallengeBrief,
+  mockApprovedCreators,
+  formatClosesIn,
+  budgetProgress,
+} from "@/lib/mock";
 import { COPY } from "@/lib/copy";
 
 interface ChallengePageProps {
@@ -21,6 +28,11 @@ export default async function ChallengePage({ params }: ChallengePageProps) {
   }
 
   const brief = mockChallengeBrief;
+  const closesText = formatClosesIn(brief.closesAt);
+  const { percent: budgetPercent, spent: budgetSpent } = budgetProgress(
+    brief.budgetTotalUsd,
+    brief.budgetRemainingUsd
+  );
 
   return (
     <div className="container max-w-screen-xl mx-auto px-6 py-12">
@@ -42,6 +54,15 @@ export default async function ChallengePage({ params }: ChallengePageProps) {
                 </Badge>
               </div>
             </div>
+
+            {/* V2: Countries chips */}
+            <div className="flex flex-wrap gap-2">
+              {brief.countries.map((country) => (
+                <Badge key={country} variant="outline" className="text-xs">
+                  {country}
+                </Badge>
+              ))}
+            </div>
           </div>
 
           {/* Why Suggested */}
@@ -58,10 +79,24 @@ export default async function ChallengePage({ params }: ChallengePageProps) {
             </CardContent>
           </Card>
 
-          {/* Payout */}
+          {/* Payout & Closes In */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">{COPY.BRIEF_PAYOUT}</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg">{COPY.BRIEF_PAYOUT}</CardTitle>
+                {/* V2: Closes in badge */}
+                <Badge
+                  variant="outline"
+                  className={
+                    closesText.includes("today") ||
+                    closesText.includes("tomorrow")
+                      ? "border-amber-300 bg-amber-50 text-amber-800"
+                      : "border-neutral-300 text-neutral-700"
+                  }
+                >
+                  {closesText}
+                </Badge>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -69,6 +104,27 @@ export default async function ChallengePage({ params }: ChallengePageProps) {
                   {brief.payoutAmount}
                 </p>
                 <p className="text-sm text-neutral-600">{brief.payoutModel}</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* V2: Budget Remaining */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">
+                {COPY.BRIEF_BUDGET_REMAINING}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Progress value={budgetPercent} className="h-2" />
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-neutral-600">
+                  ${budgetSpent.toLocaleString()} {COPY.BRIEF_BUDGET_SPENT_OF} $
+                  {brief.budgetTotalUsd.toLocaleString()}
+                </span>
+                <span className="font-medium text-neutral-900">
+                  {budgetPercent}% allocated
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -91,6 +147,14 @@ export default async function ChallengePage({ params }: ChallengePageProps) {
               </ul>
             </CardContent>
           </Card>
+
+          {/* V2: Approved Creators */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">
+              {COPY.BRIEF_APPROVED_CREATORS}
+            </h2>
+            <ApprovedCreators creators={mockApprovedCreators} />
+          </div>
 
           {/* Examples */}
           <div className="space-y-4">

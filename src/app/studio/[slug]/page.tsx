@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ProgressRail } from "@/features/studio/ProgressRail";
 import { PlanChat } from "@/features/studio/PlanChat";
-import { ScriptPane } from "@/features/studio/ScriptPane";
-import { MakePane } from "@/features/studio/MakePane";
+import { ComposePane } from "@/features/studio/ComposePane";
 import { PublishPane } from "@/features/studio/PublishPane";
+import { ShimmerCard } from "@/components/ui/loading-shimmer";
 import { useFlowStore } from "@/lib/flow-store";
 import { COPY } from "@/lib/copy";
 
@@ -28,6 +28,9 @@ export default function StudioPage({ params }: StudioPageProps) {
     previousStep,
   } = useFlowStore();
 
+  // Shimmer transition state
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
   // Sync draftId from URL to store on mount
   useEffect(() => {
     if (draftId && draftId !== storeDraftId) {
@@ -40,7 +43,12 @@ export default function StudioPage({ params }: StudioPageProps) {
       // Navigate to submitted page
       router.push("/submitted");
     } else {
-      nextStep();
+      // Show shimmer, then transition
+      setIsTransitioning(true);
+      setTimeout(() => {
+        nextStep();
+        setIsTransitioning(false);
+      }, 200);
     }
   };
 
@@ -49,7 +57,12 @@ export default function StudioPage({ params }: StudioPageProps) {
       // Go back to challenge brief
       router.push(`/challenge/${params.slug}`);
     } else {
-      previousStep();
+      // Show shimmer, then transition
+      setIsTransitioning(true);
+      setTimeout(() => {
+        previousStep();
+        setIsTransitioning(false);
+      }, 200);
     }
   };
 
@@ -64,14 +77,23 @@ export default function StudioPage({ params }: StudioPageProps) {
 
       {/* Main Content Area */}
       <div className="flex-1 container max-w-screen-xl mx-auto px-6 py-8">
-        {/* Step Content - Conditionally rendered based on step */}
-        {step === "plan" && <PlanChat />}
+        {/* Show shimmer during transitions */}
+        {isTransitioning ? (
+          <div className="space-y-6">
+            <ShimmerCard className="h-32" />
+            <ShimmerCard className="h-64" />
+            <ShimmerCard className="h-48" />
+          </div>
+        ) : (
+          <>
+            {/* Step Content - V2: 3-step flow */}
+            {step === "plan" && <PlanChat />}
 
-        {step === "script" && <ScriptPane />}
+            {step === "compose" && <ComposePane />}
 
-        {step === "make" && <MakePane />}
-
-        {step === "publish" && <PublishPane />}
+            {step === "publish" && <PublishPane />}
+          </>
+        )}
       </div>
 
       {/* Bottom Navigation */}

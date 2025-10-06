@@ -1,22 +1,17 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-
-export type StudioStep = "plan" | "script" | "make" | "publish";
-
-export type ArollMode = "upload" | "ai" | "record-later";
+import type { StudioStep, ComposeSlotId, ComposeSlot } from "./types";
 
 interface FlowState {
   // Studio flow state
   step: StudioStep;
   draftId: string | null;
 
-  // Script state
-  selectedScriptId: string | null;
-  scriptEditorContent: string;
+  // Compose state (V2: replaces Script + Make)
+  slots: Record<ComposeSlotId, ComposeSlot>;
+  selectedVariantId: string | null;
 
-  // Make state
-  aRollMode: ArollMode;
-  selectedBrollIds: string[];
+  // Caption settings (shared across slots)
   autoCaptions: boolean;
   brandStyleCaptions: boolean;
 
@@ -32,27 +27,53 @@ interface FlowState {
   // Actions
   setStep: (step: StudioStep) => void;
   setDraftId: (id: string) => void;
-  setSelectedScriptId: (id: string | null) => void;
-  setScriptEditorContent: (content: string) => void;
-  setArollMode: (mode: ArollMode) => void;
-  toggleBrollSelection: (id: string) => void;
+  applyScriptVariant: (variantId: string) => void;
+  setSlotOverlay: (slotId: ComposeSlotId, text: string) => void;
+  setSlotARollMode: (slotId: ComposeSlotId, mode: "upload" | "ai") => void;
+  toggleSlotBrandMedia: (slotId: ComposeSlotId, mediaId: string) => void;
   setAutoCaptions: (enabled: boolean) => void;
   setBrandStyleCaptions: (enabled: boolean) => void;
   togglePlatform: (platform: "instagram" | "tiktok" | "youtube") => void;
   setCaption: (caption: string) => void;
   setHashtags: (hashtags: string) => void;
-  resetFlow: () => void;
+  resetAll: () => void;
   nextStep: () => void;
   previousStep: () => void;
 }
 
+// Initial slot state for compose step
+const createInitialSlots = (): Record<ComposeSlotId, ComposeSlot> => ({
+  hook: {
+    id: "hook",
+    label: "Hook",
+    targetSec: 4, // 3-5s average
+    overlayText: "",
+    aRollMode: "upload",
+    mediaBrandIds: [],
+  },
+  body: {
+    id: "body",
+    label: "Body",
+    targetSec: 16, // 12-20s average
+    overlayText: "",
+    aRollMode: "upload",
+    mediaBrandIds: [],
+  },
+  cta: {
+    id: "cta",
+    label: "CTA",
+    targetSec: 4, // 3-5s average
+    overlayText: "",
+    aRollMode: "upload",
+    mediaBrandIds: [],
+  },
+});
+
 const initialState = {
   step: "plan" as StudioStep,
   draftId: null,
-  selectedScriptId: null,
-  scriptEditorContent: "",
-  aRollMode: "upload" as ArollMode,
-  selectedBrollIds: [],
+  slots: createInitialSlots(),
+  selectedVariantId: null,
   autoCaptions: true,
   brandStyleCaptions: true,
   platformToggles: {
@@ -73,19 +94,54 @@ export const useFlowStore = create<FlowState>()(
 
       setDraftId: (id) => set({ draftId: id }),
 
-      setSelectedScriptId: (id) => set({ selectedScriptId: id }),
+      // Apply a script variant to all slots
+      applyScriptVariant: (variantId) => {
+        // This will be called with the variant data from mock.ts
+        // The actual variant data will be passed in from the UI component
+        set({ selectedVariantId: variantId });
+      },
 
-      setScriptEditorContent: (content) =>
-        set({ scriptEditorContent: content }),
-
-      setArollMode: (mode) => set({ aRollMode: mode }),
-
-      toggleBrollSelection: (id) =>
+      // Update overlay text for a specific slot
+      setSlotOverlay: (slotId, text) =>
         set((state) => ({
-          selectedBrollIds: state.selectedBrollIds.includes(id)
-            ? state.selectedBrollIds.filter((bId) => bId !== id)
-            : [...state.selectedBrollIds, id],
+          slots: {
+            ...state.slots,
+            [slotId]: {
+              ...state.slots[slotId],
+              overlayText: text,
+            },
+          },
         })),
+
+      // Update A-roll mode for a specific slot
+      setSlotARollMode: (slotId, mode) =>
+        set((state) => ({
+          slots: {
+            ...state.slots,
+            [slotId]: {
+              ...state.slots[slotId],
+              aRollMode: mode,
+            },
+          },
+        })),
+
+      // Toggle brand media selection for a specific slot
+      toggleSlotBrandMedia: (slotId, mediaId) =>
+        set((state) => {
+          const slot = state.slots[slotId];
+          const isSelected = slot.mediaBrandIds.includes(mediaId);
+          return {
+            slots: {
+              ...state.slots,
+              [slotId]: {
+                ...slot,
+                mediaBrandIds: isSelected
+                  ? slot.mediaBrandIds.filter((id) => id !== mediaId)
+                  : [...slot.mediaBrandIds, mediaId],
+              },
+            },
+          };
+        }),
 
       setAutoCaptions: (enabled) => set({ autoCaptions: enabled }),
 
@@ -103,11 +159,12 @@ export const useFlowStore = create<FlowState>()(
 
       setHashtags: (hashtags) => set({ hashtags }),
 
-      resetFlow: () => set(initialState),
+      // Reset all state and clear sessionStorage
+      resetAll: () => set({ ...initialState, slots: createInitialSlots() }),
 
       nextStep: () => {
         const currentStep = get().step;
-        const steps: StudioStep[] = ["plan", "script", "make", "publish"];
+        const steps: StudioStep[] = ["plan", "compose", "publish"];
         const currentIndex = steps.indexOf(currentStep);
         if (currentIndex < steps.length - 1) {
           set({ step: steps[currentIndex + 1] });
@@ -116,7 +173,7 @@ export const useFlowStore = create<FlowState>()(
 
       previousStep: () => {
         const currentStep = get().step;
-        const steps: StudioStep[] = ["plan", "script", "make", "publish"];
+        const steps: StudioStep[] = ["plan", "compose", "publish"];
         const currentIndex = steps.indexOf(currentStep);
         if (currentIndex > 0) {
           set({ step: steps[currentIndex - 1] });
