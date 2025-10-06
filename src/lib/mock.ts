@@ -1,4 +1,22 @@
-// Mock data for Therefore prototype
+// Mock data for Therefore V2 prototype
+
+import type {
+  Opportunity,
+  ApprovedCreator,
+  ScriptVariant,
+  Guardrail,
+  ComposeSlotId,
+  ComposeSlot,
+  Submission,
+  FlowItem,
+  UserProfile,
+  MyMediaItem,
+} from "./types";
+import type { GuardrailStatus } from "./types"; // Used in Guardrail interface
+
+// ============================================================================
+// V1 INTERFACES (kept for backward compatibility during migration)
+// ============================================================================
 
 export interface IntentSuggestion {
   id: string;
@@ -17,20 +35,16 @@ export interface ChallengeBrief {
   payoutAmount: string;
   mustSayBullets: string[];
   exampleCount: number;
+  // V2 additions
+  countries: string[];
+  budgetTotalUsd: number;
+  budgetRemainingUsd: number;
+  closesAt: string;
 }
 
 export interface ChatMessage {
   sender: "therefore" | "user";
   content: string;
-}
-
-export interface ScriptVariant {
-  id: string;
-  title: string;
-  hook: string;
-  body: string[];
-  cta: string;
-  rationale: string;
 }
 
 export interface BrollItem {
@@ -44,6 +58,438 @@ export interface GuardrailCheck {
   label: string;
   status: "pass" | "warning" | "fail";
 }
+
+// ============================================================================
+// V2 DATA: OPPORTUNITIES
+// ============================================================================
+
+export const mockOpportunities: Opportunity[] = [
+  {
+    slug: "notion",
+    brand: "Notion",
+    cpmUsd: 45,
+    budgetTotalUsd: 50000,
+    budgetRemainingUsd: 32000,
+    closesAt: "2025-10-14T23:59:59Z", // 8 days from Oct 6
+    countries: ["US", "CA", "UK", "AU"],
+    whyYou:
+      "Your productivity content gets 2.3x average views and your audience asks about workflow tools.",
+    platforms: ["shorts"],
+  },
+  {
+    slug: "canva",
+    brand: "Canva",
+    cpmUsd: 38,
+    budgetTotalUsd: 40000,
+    budgetRemainingUsd: 28000,
+    closesAt: "2025-10-20T23:59:59Z", // 14 days
+    countries: ["US", "CA", "UK", "AU", "NZ"],
+    whyYou:
+      "You frequently create design content and your audience engages heavily with tool recommendations.",
+    platforms: ["shorts"],
+  },
+  {
+    slug: "grammarly",
+    brand: "Grammarly",
+    cpmUsd: 52,
+    budgetTotalUsd: 60000,
+    budgetRemainingUsd: 15000,
+    closesAt: "2025-10-10T23:59:59Z", // 4 days - urgent
+    countries: ["US", "CA", "UK"],
+    whyYou:
+      "Your writing tips videos perform well, and Grammarly aligns with your educational tone.",
+    platforms: ["shorts"],
+  },
+  {
+    slug: "shopify",
+    brand: "Shopify",
+    cpmUsd: 65,
+    budgetTotalUsd: 80000,
+    budgetRemainingUsd: 60000,
+    closesAt: "2025-10-25T23:59:59Z", // 19 days
+    countries: ["US", "CA", "UK", "AU"],
+    whyYou:
+      "You've covered e-commerce tips before and have an audience interested in side hustles.",
+    platforms: ["shorts"],
+  },
+  {
+    slug: "figma",
+    brand: "Figma",
+    cpmUsd: 42,
+    budgetTotalUsd: 45000,
+    budgetRemainingUsd: 38000,
+    closesAt: "2025-10-18T23:59:59Z", // 12 days
+    countries: ["US", "CA", "UK", "DE", "FR"],
+    whyYou:
+      "Your design workflow content resonates with UX/UI designers who are Figma's core audience.",
+    platforms: ["shorts"],
+  },
+  {
+    slug: "discord",
+    brand: "Discord",
+    cpmUsd: 35,
+    budgetTotalUsd: 35000,
+    budgetRemainingUsd: 25000,
+    closesAt: "2025-10-22T23:59:59Z", // 16 days
+    countries: ["US", "CA", "UK", "AU", "NZ", "DE"],
+    whyYou:
+      "Your community-building content aligns with Discord's focus on creator communities.",
+    platforms: ["shorts"],
+  },
+  {
+    slug: "calendly",
+    brand: "Calendly",
+    cpmUsd: 40,
+    budgetTotalUsd: 30000,
+    budgetRemainingUsd: 22000,
+    closesAt: "2025-10-16T23:59:59Z", // 10 days
+    countries: ["US", "CA", "UK"],
+    whyYou:
+      "Freelancers in your audience frequently ask about scheduling tools and productivity hacks.",
+    platforms: ["shorts"],
+  },
+  {
+    slug: "mailchimp",
+    brand: "Mailchimp",
+    cpmUsd: 48,
+    budgetTotalUsd: 55000,
+    budgetRemainingUsd: 45000,
+    closesAt: "2025-10-28T23:59:59Z", // 22 days
+    countries: ["US", "CA", "UK", "AU"],
+    whyYou:
+      "You've shared marketing tips before and your audience includes small business owners.",
+    platforms: ["shorts"],
+  },
+];
+
+// ============================================================================
+// V2 DATA: APPROVED CREATORS
+// ============================================================================
+
+export const mockApprovedCreators: ApprovedCreator[] = [
+  {
+    id: "creator-1",
+    handle: "@sarahdesigns",
+    platform: "instagram",
+    views: 125000,
+  },
+  {
+    id: "creator-2",
+    handle: "@productivitypro",
+    platform: "tiktok",
+    views: 340000,
+  },
+  {
+    id: "creator-3",
+    handle: "@workflowwizard",
+    platform: "youtube",
+    views: 89000,
+  },
+  {
+    id: "creator-4",
+    handle: "@creativehustle",
+    platform: "instagram",
+    views: 210000,
+  },
+  {
+    id: "creator-5",
+    handle: "@techexplained",
+    platform: "tiktok",
+    views: 156000,
+  },
+  {
+    id: "creator-6",
+    handle: "@designdaily",
+    platform: "youtube",
+    views: 98000,
+  },
+];
+
+// ============================================================================
+// V2 DATA: BRAND MEDIA (for Compose step media picker)
+// ============================================================================
+
+export interface BrandMediaItem {
+  id: string;
+  label: string;
+  recommendedFor: ComposeSlotId;
+  duration: string;
+}
+
+export const mockBrandMedia: BrandMediaItem[] = [
+  {
+    id: "media-1",
+    label: "Notion dashboard overview",
+    recommendedFor: "hook",
+    duration: "3s",
+  },
+  {
+    id: "media-2",
+    label: "Linked database demo",
+    recommendedFor: "body",
+    duration: "5s",
+  },
+  {
+    id: "media-3",
+    label: "Template gallery",
+    recommendedFor: "body",
+    duration: "4s",
+  },
+  {
+    id: "media-4",
+    label: "Web clipper in action",
+    recommendedFor: "body",
+    duration: "4s",
+  },
+  {
+    id: "media-5",
+    label: "Mobile app sync",
+    recommendedFor: "body",
+    duration: "3s",
+  },
+  {
+    id: "media-6",
+    label: "CTA screen with link",
+    recommendedFor: "cta",
+    duration: "3s",
+  },
+  {
+    id: "media-7",
+    label: "Notion AI assistant",
+    recommendedFor: "body",
+    duration: "4s",
+  },
+  {
+    id: "media-8",
+    label: "Before/after comparison",
+    recommendedFor: "hook",
+    duration: "4s",
+  },
+];
+
+// ============================================================================
+// V2 DATA: SCRIPT VARIANTS (with slot structure)
+// ============================================================================
+
+export const mockScriptVariants: ScriptVariant[] = [
+  {
+    id: "variant-1",
+    title: "Relatable Problem → Solution",
+    why: 'Matches your authentic, relatable style. Opens with the struggle your audience feels (tabs, sticky notes), uses "real talk" phrasing common in your recent videos, and the CTA mirrors your "genuinely" language that drives trust.',
+    slots: {
+      hook: {
+        overlayText:
+          "Notion sponsored this, but real talk—I was drowning in tabs and sticky notes until I found these 3 features. #ad",
+      },
+      body: {
+        overlayText:
+          "First: linked databases. I can see my projects, deadlines, and ideas in one view. Second: templates. I cloned my weekly review template and never start from scratch. Third: web clipper. I save inspiration directly into my mood board.",
+      },
+      cta: {
+        overlayText:
+          "Try it free at notion.so/yourname—link in bio. It genuinely changed how I work.",
+      },
+    },
+  },
+  {
+    id: "variant-2",
+    title: "Fast-Paced Discovery",
+    why: 'Higher energy, trending "let\'s go" format. Works if you want to test a punchier style. More platform-friendly for scrolling viewers, but slightly less "you."',
+    slots: {
+      hook: {
+        overlayText:
+          "#ad with Notion—3 features that saved my workflow. Let's go.",
+      },
+      body: {
+        overlayText:
+          "One: linked databases = one dashboard for everything. Two: templates = never rebuild from zero. Three: web clipper = save ideas in one click.",
+      },
+      cta: {
+        overlayText: "Free plan at notion.so/yourname. You'll thank me later.",
+      },
+    },
+  },
+  {
+    id: "variant-3",
+    title: "Story-Led Transformation",
+    why: 'Most narrative-driven, leans into "before/after" transformation. Builds empathy with specific pain points (47 tabs!). Best for audience retention, but needs strong B-roll pacing to work.',
+    slots: {
+      hook: {
+        overlayText:
+          "Notion's sponsoring this, but here's what actually happened when I started using it.",
+      },
+      body: {
+        overlayText:
+          "I used to have 47 browser tabs open. Notion's linked databases let me close 45 of them. I used to rebuild my weekly plan every Sunday. Their templates cut that to 30 seconds. I used to screenshot inspiration and lose it. Web clipper sends it straight to my workspace.",
+      },
+      cta: {
+        overlayText:
+          "It's free to start—notion.so/yourname. Honestly, I should've switched sooner.",
+      },
+    },
+  },
+];
+
+// ============================================================================
+// V2 HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Format ISO date string to "Closes in X days" format
+ */
+export function formatClosesIn(closesAt: string): string {
+  const now = new Date("2025-10-06"); // Mock current date
+  const closes = new Date(closesAt);
+  const diffTime = closes.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) return "Closed";
+  if (diffDays === 0) return "Closes today";
+  if (diffDays === 1) return "Closes tomorrow";
+  return `Closes in ${diffDays} days`;
+}
+
+/**
+ * Calculate budget progress percentage
+ */
+export function budgetProgress(
+  total: number,
+  remaining: number
+): { percent: number; spent: number } {
+  const spent = total - remaining;
+  const percent = Math.round((spent / total) * 100);
+  return { percent, spent };
+}
+
+// ============================================================================
+// V2 GUARDRAILS (panel format with checks based on slots)
+// ============================================================================
+
+interface GuardrailCheckParams {
+  brandName: string;
+  slots: Record<ComposeSlotId, ComposeSlot>;
+  requireHashtagAd?: boolean;
+  requireBrandDemo?: boolean;
+  minSec?: number;
+  maxSec?: number;
+}
+
+export function checkGuardrails(params: GuardrailCheckParams): Guardrail[] {
+  const {
+    brandName,
+    slots,
+    requireHashtagAd = true,
+    requireBrandDemo = true,
+    minSec = 15,
+    maxSec = 60,
+  } = params;
+
+  const allText = Object.values(slots)
+    .map((s) => s.overlayText)
+    .join(" ")
+    .toLowerCase();
+
+  const totalDuration = Object.values(slots).reduce(
+    (sum, s) => sum + s.targetSec,
+    0
+  );
+
+  const hasBrandMedia = Object.values(slots).some(
+    (s) => s.mediaBrandIds.length > 0
+  );
+
+  const hookText = slots.hook.overlayText.toLowerCase();
+
+  const checks: Guardrail[] = [];
+
+  // Check 1: Brand mention
+  const hasBrandMention = allText.includes(brandName.toLowerCase());
+  const brandStatus: GuardrailStatus = hasBrandMention ? "pass" : "fail";
+  checks.push({
+    id: "brand-mention",
+    label: `Brand mention ("${brandName}")`,
+    status: brandStatus,
+    message: hasBrandMention ? undefined : `Add "${brandName}" to any slot`,
+    fix: hasBrandMention
+      ? undefined
+      : `Mention ${brandName} in your hook or body`,
+  });
+
+  // Check 2: #ad upfront
+  const hasAdDisclosure =
+    hookText.includes("#ad") || hookText.includes("sponsored");
+  checks.push({
+    id: "ad-disclosure",
+    label: "#ad upfront",
+    status: requireHashtagAd && !hasAdDisclosure ? "fail" : "pass",
+    message:
+      requireHashtagAd && !hasAdDisclosure ? "Add #ad to Hook slot" : undefined,
+    fix:
+      requireHashtagAd && !hasAdDisclosure
+        ? 'Add "#ad" or "sponsored" to the beginning of your hook'
+        : undefined,
+  });
+
+  // Check 3: Visual brand demo
+  checks.push({
+    id: "brand-demo",
+    label: "Visual brand demo",
+    status: requireBrandDemo && !hasBrandMedia ? "warn" : "pass",
+    message:
+      requireBrandDemo && !hasBrandMedia
+        ? "Add brand media to at least one slot"
+        : undefined,
+    fix:
+      requireBrandDemo && !hasBrandMedia
+        ? "Select branded media from the media picker"
+        : undefined,
+  });
+
+  // Check 4: CTA present
+  const ctaText = slots.cta.overlayText.toLowerCase();
+  const hasCTA =
+    ctaText.length > 10 &&
+    (ctaText.includes("link") ||
+      ctaText.includes(".so") ||
+      ctaText.includes(".com") ||
+      ctaText.includes("bio"));
+  checks.push({
+    id: "cta-present",
+    label: "CTA with link",
+    status: hasCTA ? "pass" : "warn",
+    message: hasCTA ? undefined : "Add a clear call-to-action with link",
+    fix: hasCTA ? undefined : "Include your unique link in the CTA slot",
+  });
+
+  // Check 5: Duration estimate
+  const durationOk = totalDuration >= minSec && totalDuration <= maxSec;
+  checks.push({
+    id: "duration",
+    label: `Duration (~${minSec}-${maxSec}s)`,
+    status: durationOk ? "pass" : "warn",
+    message: durationOk
+      ? undefined
+      : `Current: ~${totalDuration}s (target: ${minSec}-${maxSec}s)`,
+    fix: durationOk
+      ? undefined
+      : totalDuration < minSec
+      ? "Add more content to reach minimum duration"
+      : "Shorten your script to stay under maximum",
+  });
+
+  // Check 6: Format (always pass for prototype)
+  checks.push({
+    id: "format",
+    label: "Format (9:16 vertical)",
+    status: "pass",
+  });
+
+  return checks;
+}
+
+// ============================================================================
+// V1 DATA (kept for backward compatibility)
+// ============================================================================
 
 // Intent suggestions for Home/Ask page
 export const mockIntentSuggestions: IntentSuggestion[] = [
@@ -86,7 +532,7 @@ export const mockIntentSuggestions: IntentSuggestion[] = [
   },
 ];
 
-// Challenge brief for Notion (the sponsored one)
+// Challenge brief for Notion (the sponsored one) - V2 enhanced
 export const mockChallengeBrief: ChallengeBrief = {
   slug: "notion",
   brandName: "Notion",
@@ -103,6 +549,11 @@ export const mockChallengeBrief: ChallengeBrief = {
     "Keep it under 60 seconds",
   ],
   exampleCount: 4,
+  // V2 additions
+  countries: ["US", "CA", "UK", "AU"],
+  budgetTotalUsd: 50000,
+  budgetRemainingUsd: 32000,
+  closesAt: "2025-10-14T23:59:59Z",
 };
 
 // Pre-seeded conversation for Plan step
@@ -163,50 +614,7 @@ export const mockPlanSummary = {
   duration: "45-55 seconds",
 };
 
-// Script variants for Script step
-export const mockScriptVariants: ScriptVariant[] = [
-  {
-    id: "variant-1",
-    title: "Relatable Problem → Solution",
-    hook: '[TO CAMERA] "Notion sponsored this, but real talk—I was drowning in tabs and sticky notes until I found these 3 features."',
-    body: [
-      '[SCREEN RECORD] "First: linked databases. I can see my projects, deadlines, and ideas in one view."',
-      '[SCREEN RECORD] "Second: templates. I cloned my weekly review template and never start from scratch."',
-      '[SCREEN RECORD] "Third: web clipper. I save inspiration directly into my mood board."',
-    ],
-    cta: '[TO CAMERA] "Try it free at notion.so/yourname—link in bio. It genuinely changed how I work."',
-    rationale:
-      'Matches your authentic, relatable style. Opens with the struggle your audience feels (tabs, sticky notes), uses "real talk" phrasing common in your recent videos, and the CTA mirrors your "genuinely" language that drives trust.',
-  },
-  {
-    id: "variant-2",
-    title: "Fast-Paced Discovery",
-    hook: '[TO CAMERA] "#ad with Notion—3 features that saved my workflow. Let\'s go."',
-    body: [
-      '[FAST CUT - SCREEN] "One: linked databases = one dashboard for everything."',
-      '[FAST CUT - SCREEN] "Two: templates = never rebuild from zero."',
-      '[FAST CUT - SCREEN] "Three: web clipper = save ideas in one click."',
-    ],
-    cta: '[TO CAMERA] "Free plan at notion.so/yourname. You\'ll thank me later."',
-    rationale:
-      'Higher energy, trending "let\'s go" format. Works if you want to test a punchier style. More platform-friendly for scrolling viewers, but slightly less "you."',
-  },
-  {
-    id: "variant-3",
-    title: "Story-Led Transformation",
-    hook: "[TO CAMERA] \"Notion's sponsoring this, but here's what actually happened when I started using it.\"",
-    body: [
-      '[B-ROLL + VO] "I used to have 47 browser tabs open. Notion\'s linked databases let me close 45 of them."',
-      '[B-ROLL + VO] "I used to rebuild my weekly plan every Sunday. Their templates cut that to 30 seconds."',
-      '[B-ROLL + VO] "I used to screenshot inspiration and lose it. Web clipper sends it straight to my workspace."',
-    ],
-    cta: "[TO CAMERA] \"It's free to start—notion.so/yourname. Honestly, I should've switched sooner.\"",
-    rationale:
-      'Most narrative-driven, leans into "before/after" transformation. Builds empathy with specific pain points (47 tabs!). Best for audience retention, but needs strong B-roll pacing to work.',
-  },
-];
-
-// B-roll items for Make step
+// B-roll items for Make step (V1 - kept for backward compatibility)
 export const mockBrollItems: BrollItem[] = [
   { id: "broll-1", label: "Notion dashboard overview", duration: "3s" },
   { id: "broll-2", label: "Linked database demo", duration: "4s" },
@@ -217,45 +625,6 @@ export const mockBrollItems: BrollItem[] = [
   { id: "broll-7", label: "Notion AI assistant", duration: "3s" },
   { id: "broll-8", label: "Calendar integration", duration: "3s" },
 ];
-
-// Guardrail checks (dynamic based on content)
-export const checkGuardrails = (scriptContent: string): GuardrailCheck[] => {
-  const lowerContent = scriptContent.toLowerCase();
-
-  return [
-    {
-      id: "brand-mention",
-      label: 'Brand mention ("Notion")',
-      status: lowerContent.includes("notion") ? "pass" : "fail",
-    },
-    {
-      id: "disclosure",
-      label: 'Disclosure (#ad or "sponsored")',
-      status:
-        lowerContent.includes("#ad") || lowerContent.includes("sponsor")
-          ? "pass"
-          : "fail",
-    },
-    {
-      id: "cta",
-      label: "CTA with link",
-      status: lowerContent.includes("notion.so") ? "pass" : "warning",
-    },
-    {
-      id: "duration",
-      label: "Duration estimate (~45-55s)",
-      status:
-        scriptContent.length > 200 && scriptContent.length < 800
-          ? "pass"
-          : "warning",
-    },
-    {
-      id: "format",
-      label: "Format (9:16 vertical)",
-      status: "pass", // Always pass for prototype
-    },
-  ];
-};
 
 // User context data for /context page
 export const mockUserContext = {
@@ -274,3 +643,183 @@ export const mockUserContext = {
   toneChips: ["Relatable", "Authentic", "Educational", "Casual", "Encouraging"],
   recentPostsCount: 12,
 };
+
+// ============================================================================
+// V3 DATA: SIDEBAR & USER
+// ============================================================================
+
+export const mockUser: UserProfile = {
+  name: "Alex Chen",
+  handle: "@alexcreates",
+  avatar: "👤",
+};
+
+export const mockFlows: FlowItem[] = [
+  {
+    id: "flow-1",
+    title: "Notion productivity tips",
+    lastEdited: "2025-10-06T10:30:00Z",
+  },
+  {
+    id: "flow-2",
+    title: "Behind the scenes: My setup",
+    lastEdited: "2025-10-05T14:20:00Z",
+  },
+  {
+    id: "flow-3",
+    title: "Design tools comparison",
+    lastEdited: "2025-10-04T09:15:00Z",
+  },
+  {
+    id: "flow-4",
+    title: "Freelancing tips Q&A",
+    lastEdited: "2025-10-03T16:45:00Z",
+  },
+];
+
+// ============================================================================
+// V3 DATA: MY MEDIA LIBRARY
+// ============================================================================
+
+export const mockMyMedia: MyMediaItem[] = [
+  { id: "my-1", label: "Desk setup b-roll", durationSec: 4 },
+  { id: "my-2", label: "Talking head intro", durationSec: 5 },
+  { id: "my-3", label: "Screen recording: workflow", durationSec: 8 },
+  { id: "my-4", label: "Transition clip", durationSec: 2 },
+  { id: "my-5", label: "Product unboxing", durationSec: 6 },
+  { id: "my-6", label: "Time-lapse editing", durationSec: 7 },
+  { id: "my-7", label: "Close-up hands typing", durationSec: 3 },
+  { id: "my-8", label: "Outro wave", durationSec: 3 },
+];
+
+// ============================================================================
+// V3 DATA: SUBMISSIONS BY OPPORTUNITY
+// ============================================================================
+
+export const mockSubmissionsByOpportunity: Record<string, Submission[]> = {
+  notion: [
+    {
+      id: "sub-1",
+      title: "How I organize my projects",
+      platform: "instagram",
+      views: 45200,
+      likes: 3100,
+      comments: 187,
+      earningsUsd: 203.4,
+      postedAt: "2025-10-04T12:00:00Z",
+      videoPlaceholderLabel: "Notion workflow demo",
+      creatorHandle: "@sarahdesigns",
+      status: "live",
+    },
+    {
+      id: "sub-2",
+      title: "3 Notion hacks that changed my life",
+      platform: "tiktok",
+      views: 128000,
+      likes: 8900,
+      comments: 542,
+      earningsUsd: 576.0,
+      postedAt: "2025-10-03T09:30:00Z",
+      videoPlaceholderLabel: "Notion tips montage",
+      creatorHandle: "@productivitypro",
+      status: "live",
+    },
+    {
+      id: "sub-3",
+      title: "Why I switched from Trello to Notion",
+      platform: "youtube",
+      views: 34100,
+      likes: 2400,
+      comments: 156,
+      earningsUsd: 153.45,
+      postedAt: "2025-10-05T15:00:00Z",
+      videoPlaceholderLabel: "Comparison video",
+      creatorHandle: "@workflowwizard",
+      status: "live",
+    },
+    {
+      id: "sub-4",
+      title: "My daily Notion routine",
+      platform: "instagram",
+      views: 52000,
+      likes: 3800,
+      comments: 214,
+      earningsUsd: 234.0,
+      postedAt: "2025-10-02T08:00:00Z",
+      videoPlaceholderLabel: "Morning routine",
+      creatorHandle: "@creativehustle",
+      status: "live",
+    },
+    {
+      id: "sub-5",
+      title: "Notion templates you need",
+      platform: "tiktok",
+      views: 89000,
+      likes: 6200,
+      comments: 401,
+      earningsUsd: 400.5,
+      postedAt: "2025-10-01T11:30:00Z",
+      videoPlaceholderLabel: "Template showcase",
+      creatorHandle: "@techexplained",
+      status: "live",
+    },
+    {
+      id: "sub-6",
+      title: "Before & after: My workspace",
+      platform: "youtube",
+      views: 28400,
+      likes: 1900,
+      comments: 98,
+      earningsUsd: 127.8,
+      postedAt: "2025-09-30T14:00:00Z",
+      videoPlaceholderLabel: "Transformation video",
+      creatorHandle: "@designdaily",
+      status: "live",
+    },
+    {
+      id: "sub-7",
+      title: "Notion for students",
+      platform: "instagram",
+      views: 61000,
+      likes: 4300,
+      comments: 267,
+      earningsUsd: 274.5,
+      postedAt: "2025-09-29T10:00:00Z",
+      videoPlaceholderLabel: "Study setup",
+      creatorHandle: "@studywithme",
+      status: "live",
+    },
+    {
+      id: "sub-8",
+      title: "My Notion databases explained",
+      platform: "tiktok",
+      views: 103000,
+      likes: 7800,
+      comments: 512,
+      earningsUsd: 463.5,
+      postedAt: "2025-09-28T16:30:00Z",
+      videoPlaceholderLabel: "Database tutorial",
+      creatorHandle: "@notionexpert",
+      status: "live",
+    },
+  ],
+};
+
+// Template for creating user's submission
+export const createMySubmission = (
+  slug: string,
+  title: string = "My Notion workflow"
+): Submission => ({
+  id: `my-submission-${slug}-${Date.now()}`,
+  title,
+  platform: "instagram",
+  views: 0,
+  likes: 0,
+  comments: 0,
+  earningsUsd: 0,
+  postedAt: new Date().toISOString(),
+  videoPlaceholderLabel: "Your video",
+  creatorHandle: mockUser.handle,
+  status: "under_review",
+  isMine: true,
+});

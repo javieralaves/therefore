@@ -1,21 +1,19 @@
 import { Progress } from "@/components/ui/progress";
-import { StudioStep } from "@/lib/flow-store";
+import type { StudioStep } from "@/lib/types";
 
 interface ProgressRailProps {
   currentStep: StudioStep;
 }
 
-const stepToProgress = {
-  plan: 25,
-  script: 50,
-  make: 75,
+const stepToProgress: Record<StudioStep, number> = {
+  plan: 33,
+  compose: 66,
   publish: 100,
 };
 
-const stepLabels = {
+const stepLabels: Record<StudioStep, string> = {
   plan: "Plan",
-  script: "Script",
-  make: "Make",
+  compose: "Compose",
   publish: "Publish",
 };
 

@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { COPY } from "@/lib/copy";
 
 interface BrandGuardrailsProps {
   bullets: string[];
@@ -13,9 +12,11 @@ export function BrandGuardrails({
   return (
     <Card className="border-2 border-neutral-300 bg-neutral-50">
       <CardHeader>
-        <CardTitle className="text-lg">{COPY.GUARDRAILS_TITLE}</CardTitle>
+        <CardTitle className="text-lg">Brand requirements</CardTitle>
         {showSubtitle && (
-          <p className="text-sm text-neutral-600">{COPY.GUARDRAILS_SUBTITLE}</p>
+          <p className="text-sm text-neutral-600">
+            Live checks for brand requirements
+          </p>
         )}
       </CardHeader>
       <CardContent>
